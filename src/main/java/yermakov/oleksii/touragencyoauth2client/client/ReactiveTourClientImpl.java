@@ -1,5 +1,6 @@
 package yermakov.oleksii.touragencyoauth2client.client;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -9,13 +10,13 @@ import yermakov.oleksii.touragencyoauth2client.model.TourDto;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
+@RequiredArgsConstructor
 @Service
 public class ReactiveTourClientImpl implements ReactiveTourClient {
     public static final String TOUR_API_PATH = "/tourCrud";
     public static final String TOUR_ID_PATH =  TOUR_API_PATH + "/{tourId}";
 
-    private final WebClient webClient = WebClient.builder()
-            .baseUrl("http://localhost:8080").build();
+    private final WebClient webClient;
 
 
     @Override

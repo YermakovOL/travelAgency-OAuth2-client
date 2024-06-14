@@ -19,13 +19,13 @@ public class TourClientController {
 
     private final ReactiveTourClient tourClient;
 
-    @GetMapping
+    @GetMapping(TOUR_CLIENT_PATH)
     public Flux<TourDto> listBeers(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                    @RequestParam(value = "size", defaultValue = "25") Integer size){
         return tourClient.getTours(page, size);
     }
 
-    @PostMapping
+    @PostMapping(TOUR_CLIENT_PATH)
     public Mono<ResponseEntity<URI>> createTour(@RequestBody TourDto tourDto) {
         return tourClient.postTour(tourDto)
                 .map(uri -> ResponseEntity.created(uri).build());
