@@ -32,24 +32,24 @@ public class WebFluxConfig {
     }
     ExchangeFilterFunction logRequest() {
         return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
-            if (log.isDebugEnabled()) {
+            if (log.isInfoEnabled()) {
                 StringBuilder sb = new StringBuilder("Request: \n");
                 //append clientRequest method and url
                 clientRequest
                         .headers()
-                        .forEach((name, values) -> values.forEach(value -> sb.append(name).append(value)));
-                log.debug(sb.toString());
+                        .forEach((name, values) -> values.forEach(value -> sb.append(name).append(":").append(value)));
+                log.info(sb.toString());
             }
             return Mono.just(clientRequest);
         });
     }ExchangeFilterFunction logResponse() {
         return ExchangeFilterFunction.ofResponseProcessor(clientRequest -> {
-            if (log.isDebugEnabled()) {
+            if (log.isInfoEnabled()) {
                 StringBuilder sb = new StringBuilder("Response: \n");
                 //append clientRequest method and url
                 clientRequest
                         .headers().asHttpHeaders().forEach((name, values) -> values.forEach(value -> sb.append(name).append(value)));
-                log.debug(sb.toString());
+                log.info(sb.toString());
             }
             return Mono.just(clientRequest);
         });
