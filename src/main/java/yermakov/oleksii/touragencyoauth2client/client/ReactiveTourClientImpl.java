@@ -18,30 +18,19 @@ public class ReactiveTourClientImpl implements ReactiveTourClient {
 
     private final WebClient webClient;
 
-
-    @Override
-    public Flux<TourDto> getTours(Integer page, Integer size) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path(TOUR_API_PATH)
-                        .queryParam("page", page)
-                        .queryParam("size", size)
-                        .build())
-                .retrieve()
-                .bodyToFlux(TourDto.class);
-    }
-
     @Override
     public Mono<URI> postTour(TourDto tourDto) {
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder.path(TOUR_API_PATH).build())
                 .body(Mono.just(tourDto), TourDto.class)
-                .retrieve()
-                .bodyToMono(URI.class);
+                .retrieve().toBodilessEntity()
+                .flatMap(voidResponseEntity -> Mono.just(URI.create(voidResponseEntity
+                        .getHeaders().get("Location").get(0))));
     }
 
     @Override
     public Mono<Void> deleteTourById(UUID tourId) {
-        return webClient.post()
+        return webClient.delete()
                 .uri(uriBuilder -> uriBuilder.path(TOUR_ID_PATH).build(tourId))
                 .retrieve()
                 .toBodilessEntity()
@@ -49,16 +38,8 @@ public class ReactiveTourClientImpl implements ReactiveTourClient {
     }
 
     @Override
-    public Mono<TourDto> getTourById(UUID tourId) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path(TOUR_ID_PATH).build(tourId))
-                .retrieve()
-                .bodyToMono(TourDto.class);
-    }
-
-    @Override
     public Mono<Void> putTourById(UUID tourId, TourDto tourDto) {
-        return webClient.post()
+        return webClient.put()
                 .uri(uriBuilder -> uriBuilder.path(TOUR_ID_PATH).build(tourId))
                 .body(Mono.just(tourDto), TourDto.class)
                 .retrieve()
@@ -68,7 +49,7 @@ public class ReactiveTourClientImpl implements ReactiveTourClient {
 
     @Override
     public Mono<Void> patchTourById(UUID tourId, TourDto tourDto) {
-        return webClient.post()
+        return webClient.patch()
                 .uri(uriBuilder -> uriBuilder.path(TOUR_ID_PATH).build(tourId))
                 .body(Mono.just(tourDto), TourDto.class)
                 .retrieve()

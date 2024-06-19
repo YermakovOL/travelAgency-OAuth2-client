@@ -13,34 +13,26 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-public class TourClientController {
+public class TourClientController implements TourOauth2ClientController{
     public static final String TOUR_CLIENT_PATH = "/tour";
     public static final String TOUR_CLIENT_ID_PATH = TOUR_CLIENT_PATH + "/{tourId}";
 
     private final ReactiveTourClient tourClient;
 
-    @GetMapping(TOUR_CLIENT_PATH)
-    public Flux<TourDto> listBeers(@RequestParam(value = "page", defaultValue = "0") Integer page,
-                                   @RequestParam(value = "size", defaultValue = "25") Integer size){
-        return tourClient.getTours(page, size);
-    }
-
     @PostMapping(TOUR_CLIENT_PATH)
-    public Mono<ResponseEntity<URI>> createTour(@RequestBody TourDto tourDto) {
+    public Mono<ResponseEntity<URI>> postTour(@RequestBody TourDto tourDto) {
         return tourClient.postTour(tourDto)
-                .map(uri -> ResponseEntity.created(uri).build());
-    }
-
-    @GetMapping(TOUR_CLIENT_ID_PATH)
-    public Mono<ResponseEntity<TourDto>> getTourById(@PathVariable UUID tourId) {
-        return tourClient.getTourById(tourId)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build()); // Handle not found
+                .flatMap(uri -> Mono.just(ResponseEntity.created(uri).build()));
     }
 
     @PutMapping(TOUR_CLIENT_ID_PATH)
-    public Mono<ResponseEntity<Void>> updateTour(@PathVariable UUID tourId, @RequestBody TourDto tourDto) {
+    public Mono<ResponseEntity<Void>> putTour(@PathVariable UUID tourId, @RequestBody TourDto tourDto) {
         return tourClient.putTourById(tourId, tourDto)
+                .thenReturn(ResponseEntity.noContent().build());
+    }
+    @PatchMapping(TOUR_CLIENT_ID_PATH)
+    public Mono<ResponseEntity<Void>> patchTour(@PathVariable UUID tourId, @RequestBody TourDto tourDto) {
+        return tourClient.patchTourById(tourId, tourDto)
                 .thenReturn(ResponseEntity.noContent().build());
     }
 
