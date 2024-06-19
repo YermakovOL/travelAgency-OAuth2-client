@@ -1,0 +1,129 @@
+openapi: 3.0.3
+info:
+  title: Tour Agency OAuth2 Client
+  description: Client for interacting with the OAuth2 Resource Servers
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8081
+paths:
+  /tour:
+    post:
+      summary: Create a new tour
+      description: Creates a new tour on the server using the provided data.
+      operationId: createTour
+      requestBody:
+        description: New tour data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TourDto'
+      responses:
+        '201':
+          description: Tour successfully created
+          headers:
+            Location:
+              description: URI of the created tour
+              schema:
+                type: string
+        '401':
+          description: Unauthorized access
+  /tour/{tourId}:
+    put:
+      summary: Update tour by ID
+      description: Retrieves a tour from the server by its ID.
+      operationId: getTourById
+      parameters:
+        - name: tourId
+          in: path
+          description: Tour ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: New tour data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TourDto'
+      responses:
+        '200':
+          description: Tour successfully updated
+        '401':
+          description: Unauthorized access
+        '404':
+          description: Tour not found
+    patch:
+      summary: Partially update tour by ID
+      description: Retrieves a tour from the server by its ID.
+      operationId: getTourById
+      parameters:
+        - name: tourId
+          in: path
+          description: Tour ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: New tour data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TourDto'
+      responses:
+        '200':
+          description: Tour successfully updated partially
+        '401':
+          description: Unauthorized access
+        '404':
+          description: Tour not found
+    delete:
+      summary: Delete tour by ID
+      description: Retrieves a tour from the server by its ID.
+      operationId: getTourById
+      parameters:
+        - name: tourId
+          in: path
+          description: Tour ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Tour successfully deleted
+        '401':
+          description: Unauthorized access
+        '404':
+          description: Tour not found
+
+components:
+  schemas:
+    TourDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Tour name
+        description:
+          type: string
+          description: Tour description
+        price:
+          type: number
+          description: Tour price
+        startDate:
+          type: string
+          format: date
+          description: Tour start date
+        endDate:
+          type: string
+          format: date
+          description: Tour end date
+      required:
+        - name
+        - price
