@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Туроператор - Тури</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>Тури</h1>
+
+<!-- Поле для відображення результату -->
+<div id="result"></div>
+
+<!-- Кнопки та форми для відправлення запитів -->
+<h2>Створити тур</h2>
+<form id="createTourForm" method="POST" action="/your-create-tour-endpoint">
+    <label for="tourName">Назва туру:</label>
+    <input type="text" id="tourName" name="tourName" required>
+
+    <label for="description">Опис туру:</label>
+    <textarea id="description" name="description" required></textarea>
+
+    <label for="price">Ціна:</label>
+    <input type="number" id="price" name="price" min="0" step="0.01" required>
+
+    <label for="startDate">Дата початку:</label>
+    <input type="date" id="startDate" name="startDate" required>
+
+    <label for="endDate">Дата закінчення:</label>
+    <input type="date" id="endDate" name="endDate" required>
+
+    <button type="submit">Створити тур</button>
+</form>
+
+<h2>Оновити тур (PUT)</h2>
+<form id="putTourForm" method="POST" action="/your-put-tour-endpoint">
+    <input type="hidden" name="_method" value="PUT"> <label for="putTourId">ID туру:</label>
+    <input type="text" id="putTourId" name="putTourId" required>
+    <label for="putTourName">Назва туру:</label>
+    <input type="text" id="putTourName" name="putTourName">
+    <label for="putDescription">Опис туру:</label>
+    <textarea id="putDescription" name="putDescription"></textarea>
+    <label for="putPrice">Ціна:</label>
+    <input type="number" id="putPrice" name="putPrice" min="0" step="0.01">
+    <label for="putStartDate">Дата початку:</label>
+    <input type="date" id="putStartDate" name="putStartDate">
+    <label for="putEndDate">Дата закінчення:</label>
+    <input type="date" id="putEndDate" name="putEndDate">
+    <button type="submit">Оновити тур</button>
+</form>
+
+<h2>Оновити тур (PATCH)</h2>
+<form id="patchTourForm" method="POST" action="/your-patch-tour-endpoint">
+    <input type="hidden" name="_method" value="PATCH">
+    <label for="patchTourId">ID туру:</label>
+    <input type="text" id="patchTourId" name="patchTourId" required>
+    <label for="patchTourName">Назва туру:</label>
+    <input type="text" id="patchTourName" name="patchTourName">
+    <label for="patchDescription">Опис туру:</label>
+    <textarea id="patchDescription" name="patchDescription"></textarea>
+    <label for="patchPrice">Ціна:</label>
+    <input type="number" id="patchPrice" name="patchPrice" min="0" step="0.01">
+    <label for="patchStartDate">Дата початку:</label>
+    <input type="date" id="patchStartDate" name="patchStartDate">
+    <label for="patchEndDate">Дата закінчення:</label>
+    <input type="date" id="patchEndDate" name="patchEndDate">
+    <button type="submit">Оновити тур</button>
+</form>
+
+<h2>Видалити тур</h2>
+<form id="deleteTourForm" method="POST" action="/your-delete-tour-endpoint">
+    <input type="hidden" name="_method" value="DELETE">
+    <label for="deleteTourId">ID туру:</label>
+    <input type="text" id="deleteTourId" name="deleteTourId" required>
+    <button type="submit">Видалити тур</button>
+</form>
+
+<script>
+    function emptyToNull(value) {
+        return value === "" ? null : value;
+    }
+
+    const TOUR_REGISTRATION_API_PATH = 'http://localhost:8081/tour';
+    $('#createTourForm').submit(function (event) {
+        event.preventDefault();
+        const formData = {
+            name: $('#tourName').val(),
+            description: $('#description').val(),
+            price: $('#price').val(),
+            startDate: $('#startDate').val(),
+            endDate: $('#endDate').val()
+        };
+        $.ajax({
+            url: TOUR_REGISTRATION_API_PATH,
+            type: 'POST',
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            success: function (data, status, xhr) {
+                $('#result').text("Тур створений успішно! Код відповіді: " + xhr.status + " Location:" +  xhr.getResponseHeader('location') );
+            },
+            error: function (xhr, status, error) {
+                $('#result').text("Помилка: " + xhr.status + " - " + error + ". Відповідь сервера: " + xhr.responseText);
+            }
+        });
+    });
+
+    $('#putTourForm').submit(function (event) {
+        event.preventDefault();
+        const tourId = $('#putTourId').val();
+        const formData = {
+            name: $('#putTourName').val(),
+            description: $('#putDescription').val(),
+            price: $('#putPrice').val(),
+            startDate: $('#putStartDate').val(),
+            endDate: $('#putEndDate').val()
+        };
+        $.ajax({
+            url: TOUR_REGISTRATION_API_PATH + "/" + tourId,
+            type: 'PUT',
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            success: function (data, status, xhr) {
+                $('#result').text("Тур оновлено успішно! Код відповіді: " + xhr.status);
+            },
+            error: function (xhr, status, error) {
+                $('#result').text("Помилка: " + xhr.status + " - " + error + ". Відповідь сервера: " + xhr.responseText);
+            }
+        });
+    });
+
+    $('#patchTourForm').submit(function (event) {
+        event.preventDefault();
+        const tourId = $('#patchTourId').val();
+        const formData = {
+            name: emptyToNull($('#patchTourName').val()),
+            description: emptyToNull($('#patchDescription').val()),
+            price: emptyToNull($('#patchPrice').val()),
+            startDate: emptyToNull($('#patchStartDate').val()),
+            endDate: emptyToNull($('#patchEndDate').val())
+        };
+        $.ajax({
+            url: TOUR_REGISTRATION_API_PATH + "/" + tourId,
+            type: 'PATCH',
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            success: function (data, status, xhr) {
+                $('#result').text("Тур частково оновлено успішно! Код відповіді: " + xhr.status);
+            },
+            error: function (xhr, status, error) {
+                $('#result').text("Помилка: " + xhr.status + " - " + error + ". Відповідь сервера: " + xhr.responseText);
+            }
+        });
+    });
+
+    $('#deleteTourForm').submit(function (event) {
+        event.preventDefault();
+        const tourId = $('#deleteTourId').val();
+        $.ajax({
+            url: TOUR_REGISTRATION_API_PATH + "/" + tourId,
+            type: 'DELETE',
+            success: function (data, status, xhr) {
+                $('#result').text("Тур видалено успішно! Код відповіді: " + xhr.status);
+            },
+            error: function (xhr, status, error) {
+                $('#result').text("Помилка: " + xhr.status + " - " + error + ". Відповідь сервера: " + xhr.responseText);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
