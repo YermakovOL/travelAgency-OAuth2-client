@@ -9,7 +9,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
 @EnableWebFluxSecurity
-public class WebSecurityConfig {
+public class WebFluxSecurityConfig {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http.authorizeExchange(auth -> auth.anyExchange().authenticated())
