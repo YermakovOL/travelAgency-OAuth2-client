@@ -55,6 +55,8 @@ public WebClient webClient() {
 }
 
 ```
-Thymeleaf Integration
+##Thymeleaf Integration
+
 The web page for using the CRUD API of our resource server is available at localhost:8081/tourPage.
+
 tourPage.html (`src/main/resources/templates/tourPage.html`)
