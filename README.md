@@ -55,6 +55,10 @@ public WebClient webClient() {
 }
 
 ```
+## OpenApi
+
+OpenApi specification (`api-spec/OAuth2Client.yaml`)
+
 ## Thymeleaf Integration
 
 The web page for using the CRUD API of our resource server is available at localhost:8081/tourPage.
